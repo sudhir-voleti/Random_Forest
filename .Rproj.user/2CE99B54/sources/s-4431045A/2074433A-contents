@@ -64,13 +64,13 @@ server <- function(input, output,session) {
     rf <- randomForest(y ~ ., data=train_data, ntree = input$n_tree, proximity=TRUE)
     p1 <- predict(rf, train_data)
     if (input$task == 'clf') {
-      train_conf = confusionMatrix(p1, train_data[,1])  
+      train_conf = caret::confusionMatrix(p1, train_data[,1])  
       #a1$table # print this as html table
       #print(a1)  # as raw text below the html tbl
     }
     p2 <- predict(rf, test_data)
     if (input$task == 'clf') {
-      test_conf = confusionMatrix(p2, test_data[,1])  
+      test_conf = caret::confusionMatrix(p2, test_data[,1])  
       #a1$table # print this as html table
       #print(a1)  # as raw text below the html tbl
     }
