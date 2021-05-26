@@ -1,0 +1,6 @@
+"0","# setup chunk"
+"0","if (!require('randomForest')){install.packages('randomForest')}; library(randomForest)"
+"0","if (!require('datasets')){install.packages('datasets')}; library(datasets)"
+"0","if (!require('caret')){install.packages('caret')}; library(caret)"
+"0","if (!require('ROCR')){install.packages('ROCR')}; library(ROCR)"
+"0","if (!require('magrittr')){install.packages('magrittr')}; library(magrittr)"

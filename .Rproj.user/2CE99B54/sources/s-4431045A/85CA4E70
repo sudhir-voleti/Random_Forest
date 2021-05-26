@@ -1,0 +1,27 @@
+{
+    "id": "85CA4E70",
+    "path": "D:/R Projects/Random_Forest/ui.R",
+    "project_path": "ui.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1621938839992.0,
+    "source_on_save": false,
+    "relative_order": 3,
+    "properties": {
+        "tempName": "Untitled2",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "65,35",
+        "scrollLine": "61"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1622001672,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1622001672461,
+    "read_only": false,
+    "read_only_alternatives": []
+}
