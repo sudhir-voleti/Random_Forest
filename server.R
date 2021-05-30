@@ -18,6 +18,8 @@ server <- function(input, output,session) {
     })
   
 
+  
+  
   #----Tab-2 Data Summary----#
   
   output$samp <- DT::renderDataTable({
@@ -34,7 +36,13 @@ server <- function(input, output,session) {
     str(tr_data())
   })
   
+  output$miss_plot <- renderPlot({
+    req(input$tr_data$datapath)
+    Amelia::missmap(tr_data())
+  })
   
+  
+  #-------------#
   output$y_ui <- renderUI({
     req(input$tr_data$datapath)
     selectInput(inputId = 'sel_y',label = "Select Y (Target Variable)",choices = tr_cols(),multiple = FALSE)
@@ -53,6 +61,13 @@ server <- function(input, output,session) {
   })
   
   
+  output$pca_plot <- renderPlot({
+    y <- tr_data()[,input$sel_y]
+    X <- tr_data()[,input$sel_x]
+    pca_plot(y,X)
+  })
+  
+  
   data <- eventReactive(input$apply, {
     y <- tr_data()[,input$sel_y]
     X <- tr_data()[,input$sel_x]
@@ -61,7 +76,8 @@ server <- function(input, output,session) {
     train_test_data <- train_test_split(df0,classifn = input$task,input$tr_per)
     train_data <- train_test_data[[1]]
     test_data <- train_test_data[[2]]
-    rf <- randomForest(y ~ ., data=train_data, ntree = input$n_tree, proximity=TRUE)
+    withProgress(message = 'Training in progress. Please wait ...',
+    rf <- randomForest(y ~ ., data=train_data, ntree = input$n_tree, proximity=TRUE))
     p1 <- predict(rf, train_data)
     if (input$task == 'clf') {
       train_conf = caret::confusionMatrix(p1, train_data[,1])  
@@ -131,7 +147,7 @@ server <- function(input, output,session) {
                main = "Top 10 - Variable Importance")
   })
   
-  output$var_imp_tb <- renderDataTable({
+  output$var_imp_tb <- DT::renderDataTable({
     imp_df = data.frame("Features" = rownames(importance(data()[[1]])),
                         "MeanDecreaseGini"=round(importance(data()[[1]]),2))
     a0 = sort(imp_df$MeanDecreaseGini, decreasing = TRUE, index.return=TRUE)$ix
@@ -149,8 +165,8 @@ server <- function(input, output,session) {
     out_pred_df = data.frame("prediction" = p3, pred_data)
     })# downloadable file. })
   
-  output$test_op <- renderDataTable({
-       head(out_pred_df(), 10) # display 10 rows of this as HTML tbl
+  output$test_op <- DT::renderDataTable({
+       head(out_pred_df(), 25) # display 10 rows of this as HTML tbl
   })
   
   output$download_pred <- downloadHandler(

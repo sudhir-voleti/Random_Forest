@@ -15,7 +15,7 @@ shinyUI(fluidPage(
                                   choices = c("Classification" = 'clf',
                                                "Regression" = "reg")),
                      sliderInput("tr_per",
-                                 label = "percentage of training data",
+                                 label = "Percentage of training data",
                                  min = 0,
                                  max = 1,
                                  value = 0.7,
@@ -38,14 +38,19 @@ shinyUI(fluidPage(
       tabPanel("Overview & Example Dataset", value=1, 
                includeMarkdown("overview.md")
       ),
-      tabPanel("Data Summary", value=2,
+      tabPanel("Data Summary", value=3,
                DT::dataTableOutput("samp"),
                hr(),
                h4("Data Structure"),
-               verbatimTextOutput("data_str")
+               verbatimTextOutput("data_str"),
+               h4("Missingness Map"),
+               plotOutput("miss_plot")
+              
+              
       ),
       tabPanel("RF Results", value=3,
                h4("Model Summary"),
+               helpText("Training may take a while, upto a minute"),
                verbatimTextOutput("mod_sum"),
                hr(),
                h4("Confusion Matrix (Train Set)"),
@@ -62,6 +67,8 @@ shinyUI(fluidPage(
                
       ),
       tabPanel("RF Plots",value=3,
+               h4('PCA plot'),
+               plotOutput("pca_plot"),
                h4("Error Rate Plot"),
                plotOutput("err_rate"),
                h4("ROC-AUC Curve"),
@@ -72,11 +79,11 @@ shinyUI(fluidPage(
                plotOutput("n_tree"),
                h4("Variable Importance"),
                plotOutput("var_imp"),
-               dataTableOutput("var_imp_tb")
+               DT::dataTableOutput("var_imp_tb")
                ),
       tabPanel("Prediction Output",value=3,
                helpText("Note: Please upload test data with same features in train dataset"),
-               dataTableOutput("test_op"),
+               DT::dataTableOutput("test_op"),
                downloadButton("download_pred")
                
       ),
