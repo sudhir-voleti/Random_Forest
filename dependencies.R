@@ -10,4 +10,5 @@ if (!require('DT')){install.packages('DT')}; library(DT)
 if (!require('Amelia')){install.packages('Amelia')}; library(Amelia)
 if (!require('ggplot2')){install.packages('ggplot2')}; library(ggplot2)
 if (!require('e1071')){install.packages('e1071')}; library(e1071)
+if (!require('dplyr')){install.packages('dplyr')}; library(dplyr)
 
