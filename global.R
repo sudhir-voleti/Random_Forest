@@ -37,7 +37,7 @@ plot_roc <- function(rf, test_y, test_X){  # test_y = test$y
 
 
 train_test_split <- function(df0,classifn,tr_per){
-  if (classifn == TRUE) {df0$y = as.factor(df0$y)}
+  if (classifn == "clf") {df0$y = as.factor(df0$y)}
   # Partition Data
   set.seed(222)
   ind <- sample(2, nrow(df0), replace = TRUE, prob = c(tr_per, 1-tr_per))

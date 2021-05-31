@@ -79,20 +79,17 @@ server <- function(input, output,session) {
     withProgress(message = 'Training in progress. Please wait ...',
     rf <- randomForest(y ~ ., data=train_data, ntree = input$n_tree, proximity=TRUE))
     p1 <- predict(rf, train_data)
-    if (input$task == 'clf') {
-      train_conf = caret::confusionMatrix(p1, train_data[,1])  
-      #a1$table # print this as html table
-      #print(a1)  # as raw text below the html tbl
-    }
     p2 <- predict(rf, test_data)
     if (input$task == 'clf') {
-      test_conf = caret::confusionMatrix(p2, test_data[,1])  
-      #a1$table # print this as html table
-      #print(a1)  # as raw text below the html tbl
+      train_conf = caret::confusionMatrix(p1, train_data[,1])
+      test_conf = caret::confusionMatrix(p2, test_data[,1])
+      output$roc <- renderPlot({plot_roc(rf,test_data$y,test_data[,-1])})
+      return(list(rf,train_conf,test_conf))
+    }else{
+      rmse_train <- RMSE(p1,train_data[,1])
+      rmse_test <- RMSE(p2,test_data[,1])
+      return(list(rf,rmse_train,rmse_test))
     }
-    output$roc <- renderPlot({plot_roc(rf,test_data$y,test_data[,-1])})
-    #roc.plot <- plot_roc(rf,test_data$y,test_data[,-1])
-    list(rf,train_conf,test_conf)
     
   })
   
@@ -100,36 +97,68 @@ server <- function(input, output,session) {
     data()[[1]]
   })
   
+  output$train_res <- renderUI({
+    if(input$task=="clf"){
+      plotOutput("conf_train_plot")
+    }else{
+      return(NULL)
+    }
+  })
+  
+  output$test_res <- renderUI({
+    if(input$task=="clf"){
+      plotOutput('conf_test_plot')
+    }else{
+      return(NULL)
+    }
+  })
+  
   output$conf_train_plot <- renderPlot({
     fourfoldplot(data()[[2]]$table,
                  color = c("#CC6666", "#99CC99"),
                  conf.level = 0,
-                 main="")
+                 main="Confusion Matrix (Train Set)")
   })
+ 
   
   output$conf_test_plot <- renderPlot({
     fourfoldplot(data()[[3]]$table,
                  color = c("#CC6666", "#99CC99"),
                  conf.level = 0,
-                 main="")
+                 main="Confuison Matrix (Test Set)")
   })
   
   output$conf_train <- renderPrint({
-    data()[[2]]
+    if(input$task=="clf"){
+      data()[[2]]
+    }else{
+      cat("RMSE on Train data is ",data()[[2]])
+    }
+    
   })
 
   output$conf_test <- renderPrint({
-    data()[[3]]
+    if(input$task=="clf"){
+      data()[[3]]
+    }else{
+      cat("RMSE on Test data is ",data()[[3]])
+    }
+    
   })
   
   #----RF Plot output tab ------#
   output$err_rate <- renderPlot({
-    req(tr_data())
+    req(data()[[1]])
     plot(data()[[1]],main="Error Rate")
   })
   
   output$roc <- renderPlot({
-    data()[[4]]
+    if(input$task=="clf"){
+      data()[[4]]
+    }else{
+      return(NULL)
+    }
+       
   })
   
   #-----Var Imp Plot ----#
@@ -148,12 +177,23 @@ server <- function(input, output,session) {
   })
   
   output$var_imp_tb <- DT::renderDataTable({
-    imp_df = data.frame("Features" = rownames(importance(data()[[1]])),
-                        "MeanDecreaseGini"=round(importance(data()[[1]]),2))
-    a0 = sort(imp_df$MeanDecreaseGini, decreasing = TRUE, index.return=TRUE)$ix
-    rownames(imp_df) = NULL
-   # names(imp_df) <- c("Features","MeanDecreaseGini")
-    imp_df[a0,]
+    if(input$task=="clf"){
+      imp_df = data.frame("Features" = names(importance(data()[[1]])[,1]),
+                          "MeanDecreaseGini"=round(importance(data()[[1]])[,1],2))
+      a0 = sort(imp_df$MeanDecreaseGini, decreasing = TRUE, index.return=TRUE)$ix
+      rownames(imp_df) = NULL
+      # names(imp_df) <- c("Features","MeanDecreaseGini")
+      imp_df[a0,]
+    }else{
+      imp_df = data.frame("Features" = names(importance(data()[[1]])[,1]),
+                          "Mean_Decrease_Residual_Sum_Of_Sqr"=round(importance(data()[[1]])[,1],2))
+      a0 = sort(imp_df$Mean_Residual_Sum_Of_Sqr, decreasing = TRUE, index.return=TRUE)$ix
+      rownames(imp_df) = NULL
+      # names(imp_df) <- c("Features","MeanDecreaseGini")
+      imp_df[a0,]
+    }
+    
+  
    
   })
   
