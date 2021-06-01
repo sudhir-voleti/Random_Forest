@@ -1,5 +1,27 @@
 # Needs to import ROCR package for ROC curve plotting:
 library(ROCR)
+print_roc <- function(rf,test_y,test_X){
+  prediction_for_roc_curve <- predict(rf, test_X, type="prob")
+  
+  classes <- levels(test_y)
+  
+  auc_list <- list()
+  for (i in 1:length(classes)){
+    
+    true_values <- ifelse(test_y == classes[i], 1, 0) # Define class[i] membership
+    
+    pred <- prediction(prediction_for_roc_curve[,i], true_values) # Assess classifier perf for class[i]
+    
+    perf <- performance(pred, "tpr", "fpr")
+    # abline(a=0, b=1, col="black")
+    auc.perf <- performance(pred, measure = "auc") # Calc AUC and print on screen
+    auc_list[[i]] <- paste("AUC value for class",classes[i],"is ",round(auc.perf@y.values[[1]],2))
+    
+  } # i loop ends
+return(auc_list)
+}
+
+
 
 plot_roc <- function(rf, test_y, test_X){  # test_y = test$y
   
@@ -23,6 +45,7 @@ plot_roc <- function(rf, test_y, test_X){  # test_y = test$y
     else
     {
       plot(perf, main="ROC Curve", col=pretty_colours[i], add=TRUE) 
+      
     }
     
     # abline(a=0, b=1, col="black")

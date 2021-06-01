@@ -75,7 +75,8 @@ shinyUI(fluidPage(
               # h4("Error Rate Plot"),
                plotOutput("err_rate"),
               # h4("ROC-AUC Curve"),
-               plotOutput("roc")
+               plotOutput("roc"),
+              verbatimTextOutput("roc_val")
       ),
       tabPanel("Variable Importance",value=3,
                #h4("No of nodes in trees"),

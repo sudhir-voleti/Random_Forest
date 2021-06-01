@@ -67,6 +67,7 @@ server <- function(input, output,session) {
     pca_plot(y,X)
   })
   
+  values <- reactiveValues()
   
   data <- eventReactive(input$apply, {
     y <- tr_data()[,input$sel_y]
@@ -83,7 +84,13 @@ server <- function(input, output,session) {
     if (input$task == 'clf') {
       train_conf = caret::confusionMatrix(p1, train_data[,1])
       test_conf = caret::confusionMatrix(p2, test_data[,1])
-      output$roc <- renderPlot({plot_roc(rf,test_data$y,test_data[,-1])})
+      output$roc <- renderPlot({
+                          plot_roc(rf,test_data$y,test_data[,-1])
+                    })
+      output$roc_val <- renderPrint({
+                        auc_l <- print_roc(rf,test_data$y,test_data[,-1])
+                        auc_l
+                        })
       return(list(rf,train_conf,test_conf))
     }else{
       rmse_train <- RMSE(p1,train_data[,1])
@@ -152,15 +159,15 @@ server <- function(input, output,session) {
     plot(data()[[1]],main="Error Rate")
   })
   
-  output$roc <- renderPlot({
-    if(input$task=="clf"){
-      data()[[4]]
-    }else{
-      return(NULL)
-    }
-       
-  })
-  
+  # output$roc <- renderPlot({
+  #   if(input$task=="clf"){
+  #     data()[[4]]
+  #   }else{
+  #     return(NULL)
+  #   }
+  #      
+  # })
+  # 
   #-----Var Imp Plot ----#
   
   output$n_tree <- renderPlot({
