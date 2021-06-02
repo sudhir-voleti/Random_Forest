@@ -70,7 +70,7 @@ shinyUI(fluidPage(
                
       ),
       tabPanel("RF Plots",value=3,
-               h4('PCA plot'),
+             #  h4('PCA plot'),
                plotOutput("pca_plot"),
               # h4("Error Rate Plot"),
                plotOutput("err_rate"),
