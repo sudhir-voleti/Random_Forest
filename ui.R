@@ -85,7 +85,7 @@ shinyUI(fluidPage(
                plotOutput("var_imp"),
                DT::dataTableOutput("var_imp_tb")
                ),
-      tabPanel("Prediction Output",value=3,
+      tabPanel("Prediction Output",value=1,
                helpText("Note: Please upload test data with same features in train dataset"),
                DT::dataTableOutput("test_op"),
                downloadButton("download_pred")

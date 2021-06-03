@@ -83,7 +83,7 @@ server <- function(input, output,session) {
     train_test_data <- train_test_split(df0,classifn = input$task,input$tr_per)
     train_data <- train_test_data[[1]]
     test_data <- train_test_data[[2]]
-    withProgress(message = 'Training in progress. Please wait ...',
+    withProgress(message = 'Training in progress. Please wait ...',value = 0.5,
     rf <- randomForest(y ~ ., data=train_data, ntree = input$n_tree, proximity=TRUE,na.action = na.omit))
     p1 <- predict(rf, train_data)
     p2 <- predict(rf, test_data)
@@ -216,7 +216,10 @@ server <- function(input, output,session) {
     req(test_data())
     pred_data <- test_data()[,input$sel_x]
     p3 = predict(data()[[1]], pred_data)
-    p3 <- round(p3,3)
+    if(input$task!="clf"){
+      p3 <- round(p3,3)
+    }
+    
     out_pred_df = data.frame("prediction" = p3, pred_data)
     })# downloadable file. })
   

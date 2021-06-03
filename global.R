@@ -153,6 +153,7 @@ pca_plot <- function(y,X){
   
   if (is.numeric(y)){y = as.character(paste0('y_', y))}
   X_num <- X %>% dplyr::select(where(is.numeric))
+  X_num <- X_num %>% select_if(~n_distinct(.) > 1)
   #a0 = apply(X, 2, function(x) {is.numeric(x)}) %>% which(.) %>% as.numeric(); a0
   a1 = princomp(X_num, cor=TRUE)$scores[,1:2]
   a2 = data.frame(y=y, x1=a1[,1], x2=a1[,2])
