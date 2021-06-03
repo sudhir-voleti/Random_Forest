@@ -199,7 +199,7 @@ server <- function(input, output,session) {
       imp_df[a0,]
     }else{
       imp_df = data.frame("Features" = names(importance(data()[[1]])[,1]),
-                          "Mean_Decrease_Residual_Sum_Of_Sqr"=round(importance(data()[[1]])[,1],1))
+                          "Mean_Decrease_Residual_Sum_Of_Sqr"=round(importance(data()[[1]])[,1],2))
       imp_df$Mean_Decrease_Residual_Sum_Of_Sqr <- format(imp_df$Mean_Decrease_Residual_Sum_Of_Sqr,big.mark = ",",scientific=FALSE)
      # a0 = sort(imp_df$Mean_Residual_Sum_Of_Sqr, decreasing = TRUE, index.return=TRUE)$ix
       rownames(imp_df) = NULL
